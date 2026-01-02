@@ -78,7 +78,9 @@ $(info -- $(REPO_NAME) version name: $(KSU_VERSION_FULL))
 ccflags-y += -DKSU_VERSION=$(KSU_VERSION)
 ccflags-y += -DKSU_VERSION_FULL=\"$(KSU_VERSION_FULL)\"
 
+ifeq ($(CONFIG_KSU_MULTI_MANAGER_SUPPORT), y)
 $(info -- Supported Unofficial Manager: MKSU, RKSU, SukiSU-Ultra, ReSukiSU )
+endif
 
 ifeq ($(CONFIG_KSU_MANUAL_HOOK), y)
 $(info -- $(REPO_NAME): using KSU_MANUAL_HOOK)
