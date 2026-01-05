@@ -183,10 +183,12 @@ void cache_sid(void)
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 18, 0)
 static inline bool is_sid_match_tsec(const struct task_security_struct *tsec,
-                                u32 cached_sid, const char *fallback_context)
+                                     u32 cached_sid,
+                                     const char *fallback_context)
 #else
 static inline bool is_sid_match_tsec(const struct cred_security_struct *tsec,
-                                u32 cached_sid, const char *fallback_context)
+                                     u32 cached_sid,
+                                     const char *fallback_context)
 #endif
 {
     // Fast path: use cached SID if available
