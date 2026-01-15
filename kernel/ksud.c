@@ -640,7 +640,7 @@ int ksu_handle_input_handle_event(unsigned int *type, unsigned int *code,
     if (*type == EV_KEY && *code == KEY_VOLUMEDOWN) {
         int val = *value;
         pr_info("KEY_VOLUMEDOWN val: %d\n", val);
-        if (val && is_boot_phase) {
+        if (val) {
             // key pressed, count it
             volumedown_pressed_count += 1;
             if (is_volumedown_enough(volumedown_pressed_count)) {
