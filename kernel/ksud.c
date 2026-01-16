@@ -447,6 +447,17 @@ static bool is_init_rc(struct file *fp)
     return true;
 }
 
+#ifdef CONFIG_KSU_MANUAL_HOOK
+
+// NOTE: https://github.com/tiann/KernelSU/commit/df640917d11dd0eff1b34ea53ec3c0dc49667002
+// - added 260110, seems needed for A16 QPR 3
+
+typedef enum {
+    STAT_NATIVE, // struct stat
+    STAT_COMPAT, // struct compat_stat
+    STAT_STAT64 // struct stat64 // 32-bit uses this
+} stat_type_t;
+
 static __always_inline void ksu_common_newfstat_ret(unsigned int *fd,
                                                     void **statbuf_ptr,
                                                     const bool is_compat)
@@ -508,15 +519,15 @@ void ksu_handle_newfstat_ret(unsigned int *fd, struct stat __user **statbuf_ptr)
     ksu_common_newfstat_ret(fd, (void **)statbuf_ptr, false);
 }
 
-#ifdef CONFIG_COMPAT
-void ksu_compat_newfstat_ret(unsigned int *fd,
-                             struct compat_stat __user **statbuf_ptr)
+#if defined(__ARCH_WANT_STAT64) || defined(__ARCH_WANT_COMPAT_STAT64)
+void ksu_handle_fstat64_ret(unsigned int *fd,
+                            struct stat64 __user **statbuf_ptr)
 {
-    // compat: is this even worth the trouble?
-    // only 32-on-64 can benefit, its questionable that init is on compat on A17
-    // this is so BULLSHIT that I have to do it !!
-    ksu_common_newfstat_ret(fd, (void **)statbuf_ptr, true);
+    // 32-bit call uses this!
+    ksu_common_newfstat_ret(fd, (void **)statbuf_ptr, STAT_STAT64);
 }
+#endif
+
 #endif
 
 #ifdef CONFIG_KSU_SUSFS
